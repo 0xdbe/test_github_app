@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - main
+  
+permissions:
+  checks: write
+  statuses: write
+  contents: write
+  packages: write
+  pull-requests: write
+
+name: release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: get access token as github app
+        env:
+          PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          APP_ID: 265882
+        run: |
+          IAT=$(date -d "-1 minutes" +"%s")
+          EXP=$(date -d "+9 minutes" +"%s")
+          HEADER=$(echo -n '{"type": "JWT","alg": "RS256"}' | base64 | tr '+/' '-_' | tr -d '=')
+          PAYLOAD=$(echo -n "{\"iat\": $IAT, \"exp\": $EXP, \"iss\": $APP_ID}" | base64 | tr '+/' '-_' | tr -d '=')
+          SIGNATURE=$(printf '%s' "${HEADER}.${PAYLOAD}" | \
+                    openssl dgst -sha256 -binary -sign <(printf '%s\n' "$PRIVATE_KEY") | \
+                    base64 -w 0 | \
+                    tr '+/' '-_' | \
+                    tr -d '=';)
+          GH_APP_TOKEN="${HEADER}.${PAYLOAD}.${SIGNATURE}"
+          echo GH_APP_TOKEN="${GH_APP_TOKEN}" >> $GITHUB_ENV
+          
+      - name: release please
+        uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: release-please-action
+          token: ${{ env.GH_APP_TOKEN }}
