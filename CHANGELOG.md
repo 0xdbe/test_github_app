@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/0xdbe/test_github_app/compare/v1.0.0...v1.0.1) (2022-11-29)
+
+
+### Bug Fixes
+
+* workflow permission ([c144724](https://github.com/0xdbe/test_github_app/commit/c1447243e5f49bbec1ce3a66003c5f2a799a572f))
+
 ## 1.0.0 (2022-11-29)
 
 
