@@ -31,9 +31,9 @@ jobs:
                     base64 -w 0 | \
                     tr '+/' '-_' | \
                     tr -d '=';)
-          echo "::add-mask::$GH_APP_TOKEN"
           GH_APP_TOKEN="${HEADER}.${PAYLOAD}.${SIGNATURE}"
-          echo GH_APP_TOKEN="${GH_APP_TOKEN}" >> $GITHUB_ENV
+          echo "::add-mask::$GH_APP_TOKEN"
+          echo GH_APP_TOKEN="$GH_APP_TOKEN" >> $GITHUB_ENV
 
       - name: get access token as github app installation
         env:
