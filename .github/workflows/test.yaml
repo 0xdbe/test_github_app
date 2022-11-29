@@ -36,7 +36,6 @@ jobs:
 
       - name: get access token as github app installation
         env:
-          GH_APP_TOKEN: ${{ env.GH_APP_TOKEN }}
           GH_APP_INSTALLATION_ID: 31665277
         run: |
           GH_APP_INSTALLATION_TOKEN=$(curl --location -g -s \
