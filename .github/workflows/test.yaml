@@ -33,11 +33,22 @@ jobs:
                     tr -d '=';)
           GH_APP_TOKEN="${HEADER}.${PAYLOAD}.${SIGNATURE}"
           echo GH_APP_TOKEN="${GH_APP_TOKEN}" >> $GITHUB_ENV
-          
+
+      - name: get access token as github app installation
+        env:
+          GH_APP_TOKEN: ${{ env.GH_APP_TOKEN }}
+          GH_APP_INSTALLATION_ID: 31665277
+        run: |
+          GH_APP_INSTALLATION_TOKEN=$(curl --location -g -s \
+            --request POST "https://api.github.com/app/installations/${GH_APP_INSTALLATION_ID}/access_tokens" \
+            --header 'Accept: application/vnd.github.v3+json' \
+            --header "Authorization: Bearer $GH_APP_TOKEN" | jq .token -r)
+          echo GH_APP_INSTALLATION_TOKEN="${GH_APP_INSTALLATION_TOKEN}" >> $GITHUB_ENV
+
       - name: release please
         uses: google-github-actions/release-please-action@v3
         id: release
         with:
           release-type: node
           package-name: release-please-action
-          token: ${{ env.GH_APP_TOKEN }}
+          token: ${{ env.GH_APP_INSTALLATION_TOKEN }}
